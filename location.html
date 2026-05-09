@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TC App - Location</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="header">
+        <div>☰ TC App</div>
+        <div><a href="#" onclick="handleLogout()">Logout (<span id="username-display"></span>)</a></div>
+    </div>
+    <div class="container">
+        <div class="card">
+            <h2>Select Location</h2>
+            <select id="location-select">
+                <option value="" disabled selected>Select Hub Location...</option>
+            </select>
+            <button class="btn btn-blue" onclick="window.location.href='vehicle.html'">NEXT</button>
+        </div>
+    </div>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
