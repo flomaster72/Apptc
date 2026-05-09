@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TC App - Unloading</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="header">
+        <div>☰ TC App</div>
+        <div><a href="#" onclick="handleLogout()">Logout</a></div>
+    </div>
+    
+    <div class="container">
+        <div class="breadcrumbs">
+            CentralHub_L_MUMX > HR55AW6652 > FLEET > B2C - LINEHAUL > CentralHub_L_KAL1
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active">UNLOADING</div>
+            <div class="tab">DEPARTURE_VERIFICATION</div>
+        </div>
+
+        <button class="btn btn-pink" style="margin-bottom: 15px;">&larr; Back</button>
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between;">
+                <strong>Progress</strong>
+                <span>752 / 812</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 92%;"></div>
+            </div>
+
+            <h3 style="background: #eee; padding: 10px; cursor: pointer;">Delivered (158 items) ▼</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Weight</th>
+                    </tr>
+                </thead>
+                <tbody id="shipment-data">
+                    </tbody>
+            </table>
+
+            <br>
+            <button class="btn btn-pink">SCAN</button>
+            <button class="btn btn-blue">FINISH</button>
+        </div>
+    </div>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
