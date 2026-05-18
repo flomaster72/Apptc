@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TC App - Unloading Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .back-btn { display: inline-flex; align-items: center; color: #333; text-decoration: none; font-weight: bold; margin-bottom: 15px;}
+        .accordion-header { padding: 15px; font-size: 18px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee;}
+        .row-item { display: flex; justify-content: space-between; padding: 8px 15px; border-bottom: 1px solid #f9f9f9; font-size: 14px;}
+        .row-header { color: gray; font-size: 12px; font-weight: bold; }
+        .group-container { border: 1px solid #ffe4e1; margin-bottom: 10px; border-radius: 4px; padding-bottom: 5px;}
+        .group-title { font-size: 12px; color: #e91e63; font-weight: bold; padding: 5px 8px; background-color: #fff0f5; margin-bottom: 5px;}
+    </style>
+</head>
+<body>
+    <div class="mdl-layout mdl-layout--fixed-header">
+        <header class="mdl-layout__header"><div class="mdl-layout__header-row"><span class="mdl-layout-title">TC App</span></div></header>
+        <main class="mdl-layout__content">
+            <div class="page-content">
+                <a href="summary.html" class="back-btn"><i class="material-icons">keyboard_backspace</i> Back</a>
+
+                <div class="card" style="padding:0;">
+                    <div class="accordion-header"><span id="del-title">Delivered (0)</span><i class="material-icons">check_circle</i></div>
+                    <div class="row-item row-header"><span>ID</span><span>Weight</span></div>
+                    <div id="delivered-list" style="padding: 10px;">Loading...</div>
+                </div>
+
+                <div class="card" style="padding:0;">
+                    <div class="accordion-header"><span id="exp-title">Expected (0)</span><i class="material-icons">pending</i></div>
+                    <div class="row-item row-header"><span>ID</span><span>Weight</span></div>
+                    <div id="expected-list" style="padding: 10px;">Loading...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- PASTE YOUR SUPABASE KEYS HERE ---
+        const supabaseUrl = 'https://YOUR_PROJECT_ID.supabase.co'; 
+        const supabaseKey = 'YOUR_ANON_PUBLIC_KEY'; 
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        const currentVehicle = sessionStorage.getItem('tcVehicle') || "MH46BB7741";
+        const scannedItems = JSON.parse(sessionStorage.getItem(`tc_scans_${currentVehicle}`)) || [];
+
+        window.onload = async () => {
+            const { data } = await supabase.from('shipments').select('*').eq('vehicle', currentVehicle);
+            if (!data) return;
+
+            const delivered = [], expected = [];
+            data.forEach(s => scannedItems.includes(s.tracking_id) ? delivered.push(s) : expected.push(s));
+
+            document.getElementById('delivered-list').innerHTML = buildHtml(delivered);
+            document.getElementById('expected-list').innerHTML = buildHtml(expected);
+            document.getElementById('del-title').innerText = `Delivered (${delivered.length} items)`;
+            document.getElementById('exp-title').innerText = `Expected (${expected.length} items)`;
+        };
+
+        function buildHtml(arr) {
+            let html = '', groups = {};
+            arr.forEach(s => {
+                if (!s.group_id) html += `<div class="row-item" style="padding-left:0; padding-right:0;"><span>${s.tracking_id}</span><span>${s.weight_kg}</span></div>`;
+                else { if (!groups[s.group_id]) groups[s.group_id] = []; groups[s.group_id].push(s); }
+            });
+            for (const [id, items] of Object.entries(groups)) {
+                html += `<div class="group-container"><div class="group-title">Group Id: ${id}</div>`;
+                items.forEach(i => html += `<div class="row-item" style="padding-right:0;"><span>${i.tracking_id}</span><span>${i.weight_kg}</span></div>`);
+                html += `</div>`;
+            }
+            return html || '<div style="text-align:center; color:gray; padding:10px;">No items</div>';
+        }
+    </script>
+</body>
+</html>
